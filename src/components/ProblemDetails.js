@@ -79,47 +79,60 @@ const ProblemDetails = () => {
 
   const handleSubmit = () => {
     const user = auth.currentUser;
-
+  
     if (!user) {
       alert('You need to be logged in to submit a solution.');
       return;
     }
-
+  
     const uid = user.uid;
-
-    // Call the backend to process the submission
-    // This example assumes you're calling your backend API to evaluate the code
-    axios.post('https://bear-grader-server.onrender.com/api/submit', {
-      problemId: id,
-      code: code,
-      username: username,
-    })
-      .then(res => {
-        if (res.data.score !== undefined) {
-          // Save the submission in Firebase with the user's UID
-          const newSubmissionRef = push(ref(db, `submissions/problem_${id}`));
-          set(newSubmissionRef, {
-            submissionId: newSubmissionRef.key,
-            problemId: id,
-            code: code,
-            score: res.data.score,
-            results: res.data.results,
-            userId: uid,  // Store the user's UID
-            timestamp: new Date().toISOString()
+  
+    // Fetch the username from Firebase Realtime Database
+    const userRef = ref(db, `users/${uid}`);
+    onValue(userRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data && data.username) {
+        const username = data.username;  // Retrieve the username
+  
+        // Call the backend API to submit the code along with the problem ID and username
+        axios.post('https://bear-grader-server.onrender.com/api/submit', {
+          problemId: id,
+          code: code,
+          username: username,  // Send the username
+        })
+          .then(res => {
+            if (res.data.score !== undefined) {
+              // Save the submission in Firebase with the user's UID and results
+              const newSubmissionRef = push(ref(db, `submissions/problem_${id}`));
+              set(newSubmissionRef, {
+                submissionId: newSubmissionRef.key,
+                problemId: id,
+                code: code,
+                score: res.data.score,
+                results: res.data.results,
+                userId: uid,  // Store the user's UID
+                username: username,  // Store the username in Firebase as well
+                timestamp: new Date().toISOString()
+              });
+  
+              alert(`Score: ${res.data.score}%`);
+              setResponse(res.data);
+            } else {
+              alert('Unexpected response from server.');
+            }
+          })
+          .catch(error => {
+            console.error('Error submitting code:', error);
+            alert('Error submitting code. Please try again.');
           });
-
-          alert(`Score: ${res.data.score}%`);
-          setResponse(res.data);
-        } else {
-          alert('Unexpected response from server.');
-        }
-      })
-      .catch(error => {
-        console.error('Error submitting code:', error);
-        alert('Error submitting code. Please try again.');
-      });
+      } else {
+        alert('Error retrieving username.');
+      }
+    }, {
+      onlyOnce: true // Fetch the username only once
+    });
   };
-
+  
 
   console.log(username);
 
