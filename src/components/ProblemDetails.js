@@ -55,7 +55,7 @@ const ProblemDetails = () => {
     });
 
     
-    axios.get(`http://localhost:3001/api/problems/${id}`)
+    axios.get(`https://bear-grader-server.onrender.com/api/problems/${id}`)
       .then(res => setProblem(res.data));
 
     
@@ -89,7 +89,7 @@ const ProblemDetails = () => {
 
     // Call the backend to process the submission
     // This example assumes you're calling your backend API to evaluate the code
-    axios.post('http://localhost:3001/api/submit', {
+    axios.post('https://bear-grader-server.onrender.com/api/submit', {
       problemId: id,
       code: code
     })

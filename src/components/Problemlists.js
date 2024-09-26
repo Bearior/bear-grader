@@ -31,7 +31,7 @@ const ProblemList = () => {
     });
 
     
-    axios.get('http://localhost:3001/api/problems')
+    axios.get('https://bear-grader-server.onrender.com/api/problems')
       .then(response => {
         setProblems(response.data);
       })
