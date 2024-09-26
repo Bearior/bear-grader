@@ -120,6 +120,7 @@ app.post('/api/submit', (req, res) => {
             problemId,
             code,
             score,
+            username,
             results,
             timestamp: new Date()
           };

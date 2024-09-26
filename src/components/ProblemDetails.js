@@ -91,7 +91,8 @@ const ProblemDetails = () => {
     // This example assumes you're calling your backend API to evaluate the code
     axios.post('https://bear-grader-server.onrender.com/api/submit', {
       problemId: id,
-      code: code
+      code: code,
+      username: username,
     })
       .then(res => {
         if (res.data.score !== undefined) {
@@ -184,7 +185,7 @@ const ProblemDetails = () => {
         <ul>
           {submissions.map((sub, index) => (
             <li key={index}>
-              Score: {sub.score}%, Submitted by: {username}, Submitted at: {new Date(sub.timestamp).toLocaleString()}
+              Score: {sub.score}%, Submitted by: {sub.username}, Submitted at: {new Date(sub.timestamp).toLocaleString()}
             </li>
           ))}
         </ul>
