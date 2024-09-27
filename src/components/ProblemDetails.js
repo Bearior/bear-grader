@@ -113,7 +113,7 @@ const ProblemDetails = () => {
               alert(`Score: ${res.data.score}%`);
               setResponse(res.data);
             } else {
-              alert('Unexpected response from server.');
+              alert('Compilation error or timed out (check for typo)');
             }
           })
           .catch(error => {
@@ -140,7 +140,10 @@ const ProblemDetails = () => {
           <div>
             <p>Welcome, {username}</p>
             <button className="logout-button" onClick={handleLogout}>Logout</button>
+            <a href="/leaderboard" className="leaderboard-button">View Leaderboard</a>
           </div>
+
+
         )}
       </div>
 

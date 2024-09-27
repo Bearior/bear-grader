@@ -2,10 +2,10 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import ProblemList from './components/Problemlists';
 import ProblemDetails from './components/ProblemDetails';
-import AuthSystem from './Authsystem';
 import PrivateRoute from './Privateroute';  // Import the PrivateRoute component
 import Login from './login';  // Import Login component
 import Signup from './signup'; 
+import Leaderboard from './components/Leaderboard'; 
 
 function App() {
   return (
@@ -14,6 +14,7 @@ function App() {
         {/* Public route for login */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
 
         {/* Protected routes */}
         <Route 

@@ -6,7 +6,10 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;  // Make sure to use process.env.PORT for Render
+
+// Timeout duration in milliseconds (e.g., 5 seconds)
+const TIMEOUT_DURATION = 5000;
 
 // In-memory storage for submissions (can be replaced by a database)
 let submissions = [];
@@ -16,28 +19,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const problems = [
-  {
-    id: 1,
-    title: 'Sum of Two Numbers',
-    description: 'Write a program to add two numbers.',
-    file: 'https://drive.google.com/file/d/13CVDGk9Np_EsYR15R1ZNJPvccFzHwhUm/view?usp=sharing',
-    testCases: [
-      { input: '2 3', output: '5' },
-      { input: '10 20', output: '30' },
-      { input: '100 200', output: '300' }
-    ]
-  },
-  {
-    id: 2,
-    title: 'Factorial',
-    description: 'Write a program to calculate the factorial of a number.',
-    file: 'https://drive.google.com/file/d/1Xe0IVlGywtMQACPkBI7hrCuV8UGEfj95/view?usp=sharing',
-    testCases: [
-      { input: '3', output: '6' },
-      { input: '4', output: '24' },
-      { input: '5', output: '120' }
-    ]
-  }
+  // ... your problem definitions
 ];
 
 // Get all problems
@@ -56,10 +38,9 @@ app.get('/api/problems/:id', (req, res) => {
   }
 });
 
-
 // Handle code submission and test cases
 app.post('/api/submit', (req, res) => {
-  const { code, problemId } = req.body;
+  const { code, problemId, username } = req.body;
 
   const problem = problems.find(p => p.id == problemId);
   if (!problem) {
@@ -70,8 +51,8 @@ app.post('/api/submit', (req, res) => {
   const filePath = path.join(__dirname, 'user_code.cpp');
   fs.writeFileSync(filePath, code);
 
-  // Compile the user's C++ code
-  exec(`g++ ${filePath} -o output.exe`, (error, stdout, stderr) => {
+  // Compile the user's C++ code using g++ (without .exe)
+  exec(`g++ ${filePath} -o output`, (error, stdout, stderr) => {
     if (error) {
       return res.json({ success: false, message: `Compilation Error: ${stderr}` });
     }
@@ -89,15 +70,19 @@ app.post('/api/submit', (req, res) => {
       // Write the input to a file
       fs.writeFileSync(inputFilePath, testCase.input);
 
-      // Execute the program with input redirection
-      exec(`output.exe < ${inputFilePath} > ${outputFilePath}`, (runError, runStdout, runStderr) => {
+      // Execute the program with input redirection (./output for Linux) with a timeout
+      exec(`./output < ${inputFilePath} > ${outputFilePath}`, { timeout: TIMEOUT_DURATION }, (runError, runStdout, runStderr) => {
         if (runError) {
-          results.push({ success: false, message: `Runtime Error: ${runStderr}` });
+          if (runError.killed) {
+            // This happens when the program exceeds the timeout
+            results.push({ success: false, message: `Timeout Error: Program exceeded ${TIMEOUT_DURATION / 1000} seconds limit.` });
+          } else {
+            results.push({ success: false, message: `Runtime Error: ${runStderr}` });
+          }
           return;
         }
 
         const userOutput = fs.readFileSync(outputFilePath, 'utf8').trim();
-        const userInput = fs.readFileSync(inputFilePath, 'utf8').trim();
         const expectedOutput = testCase.output.trim();
 
         if (userOutput === expectedOutput) {
@@ -110,10 +95,10 @@ app.post('/api/submit', (req, res) => {
         // After processing all test cases, save the submission and return the results
         if (results.length === totalTestCases) {
           const score = (passed / totalTestCases) * 100;
-          
+
           // Generate a unique submission ID
           const submissionId = submissionCounter++;
-          
+
           // Save the submission
           const newSubmission = {
             submissionId,
