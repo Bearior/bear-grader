@@ -21,6 +21,7 @@ const ProblemDetails = () => {
   const [submissions, setSubmissions] = useState([]);
   const [username, setUsername] = useState('');
   const [latestScore, setLatestScore] = useState(null);
+  const [loading, setLoading] = useState(false);  // New state for loading
   const navigate = useNavigate();
 
   // Fetch the problem details from the backend
@@ -85,6 +86,7 @@ const ProblemDetails = () => {
     }
 
     const uid = user.uid;
+    
 
     // Fetch the username from Firebase Realtime Database
     const userRef = ref(db, `users/${uid}`);
@@ -92,6 +94,7 @@ const ProblemDetails = () => {
       const data = snapshot.val();
       if (data && data.username) {
         const username = data.username;  // Retrieve the username
+        setLoading(true); 
 
         // Call the backend API to submit the code along with the problem ID and username
         axios.post('https://bear-grader-server.onrender.com/api/submit', {
@@ -123,6 +126,9 @@ const ProblemDetails = () => {
           .catch(error => {
             console.error('Error submitting code:', error);
             alert('Error submitting code. Please try again.');
+          })
+          .finally(() => {
+            setLoading(false);  
           });
       } else {
         alert('Error retrieving username.');
@@ -171,7 +177,9 @@ const ProblemDetails = () => {
         />
       </div>
 
-      <button className="submit-button" onClick={handleSubmit}>Submit Code</button>
+      <button className="submit-button" onClick={handleSubmit} disabled={loading}>
+        {loading ? 'Submitting...' : 'Submit Code'}
+      </button>
 
       {/* Link to view test cases */}
       <div className="view-test-cases">
