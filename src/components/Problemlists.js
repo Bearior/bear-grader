@@ -98,6 +98,7 @@ const ProblemList = () => {
         <div className="header">
           <p>Welcome, {username}</p>
           <button onClick={handleLogout} className="logout-button">Logout</button>
+          <a href="/leaderboard" className="leaderboard-button">View Leaderboard</a>
         </div>
       )}
 
