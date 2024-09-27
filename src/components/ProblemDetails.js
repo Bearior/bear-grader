@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';  // Import Link for navigation
 import axios from 'axios';
-import { ref, set, onValue, push, query, orderByChild, equalTo } from 'firebase/database';  // Import Firebase functions
-import { auth, db } from '../firebase';  // Import Firebase Auth and Database
+import { ref, set, onValue, push, query, orderByChild, equalTo } from 'firebase/database';
+import { auth, db } from '../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';  // For redirection after logout
+import { useNavigate } from 'react-router-dom';
 import './ProblemDetails.css';
 
 // Import CodeMirror for code editing
@@ -21,9 +21,9 @@ const ProblemDetails = () => {
   const [submissions, setSubmissions] = useState([]);
   const [username, setUsername] = useState('');
   const [latestScore, setLatestScore] = useState(null);
-  const [loading, setLoading] = useState(false);  // Loading state for submit button
   const navigate = useNavigate();
 
+  // Fetch the problem details from the backend
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -40,6 +40,7 @@ const ProblemDetails = () => {
           }
         });
 
+        // Fetch the username from the Firebase Realtime Database
         const userRef = ref(db, `users/${uid}`);
         onValue(userRef, (snapshot) => {
           const data = snapshot.val();
@@ -53,9 +54,11 @@ const ProblemDetails = () => {
       }
     });
 
+    
     axios.get(`https://bear-grader-server.onrender.com/api/problems/${id}`)
       .then(res => setProblem(res.data));
 
+    
     const submissionsRef = ref(db, `submissions/problem_${id}`);
     onValue(submissionsRef, (snapshot) => {
       const submissionsData = snapshot.val();
@@ -75,21 +78,21 @@ const ProblemDetails = () => {
 
   const handleSubmit = () => {
     const user = auth.currentUser;
-  
+
     if (!user) {
       alert('You need to be logged in to submit a solution.');
       return;
     }
-  
-    const uid = user.uid;
-    setLoading(true);  // Set loading to true to disable the button
 
+    const uid = user.uid;
+
+    // Fetch the username from Firebase Realtime Database
     const userRef = ref(db, `users/${uid}`);
     onValue(userRef, (snapshot) => {
       const data = snapshot.val();
       if (data && data.username) {
         const username = data.username;  // Retrieve the username
-  
+
         // Call the backend API to submit the code along with the problem ID and username
         axios.post('https://bear-grader-server.onrender.com/api/submit', {
           problemId: id,
@@ -98,6 +101,7 @@ const ProblemDetails = () => {
         })
           .then(res => {
             if (res.data.score !== undefined) {
+              // Save the submission in Firebase with the user's UID and results
               const newSubmissionRef = push(ref(db, `submissions/problem_${id}`));
               set(newSubmissionRef, {
                 submissionId: newSubmissionRef.key,
@@ -113,19 +117,15 @@ const ProblemDetails = () => {
               alert(`Score: ${res.data.score}%`);
               setResponse(res.data);
             } else {
-              alert('Compilation error or timed out (check for typo)');
+              alert('Unexpected response from server.');
             }
           })
           .catch(error => {
             console.error('Error submitting code:', error);
             alert('Error submitting code. Please try again.');
-          })
-          .finally(() => {
-            setLoading(false);  // Re-enable the button once the request completes
           });
       } else {
         alert('Error retrieving username.');
-        setLoading(false);  // Re-enable the button if there was an error
       }
     }, {
       onlyOnce: true // Fetch the username only once
@@ -136,19 +136,17 @@ const ProblemDetails = () => {
     <div className="problem-details">
       <div className="problem-header">
         <h1>{problem.title}</h1>
+        {/* Display username and logout button */}
         {username && (
           <div>
             <p>Welcome, {username}</p>
             <button className="logout-button" onClick={handleLogout}>Logout</button>
-            <a href="/leaderboard" className="leaderboard-button">View Leaderboard</a>
           </div>
-
-
         )}
       </div>
 
-      <p className="problem-description">{problem.description}</p>
-      <a href={problem.file} target="_blank" rel="noopener noreferrer">[Open problem]</a>
+      <p className="problem-description">{problem.description} </p>
+      <a href={problem.file} target="_blank" rel="noopener noreferrer"> [Open problem]</a>
 
       {latestScore !== null && (
         <div className="latest-score">
@@ -158,29 +156,31 @@ const ProblemDetails = () => {
 
       <p>This problem has {problem.testCases ? problem.testCases.length : 0} test cases.</p>
 
+      {/* CodeMirror component for code input */}
       <div className="code-editor">
         <CodeMirror
           value={code}
           options={{
-            mode: 'text/x-c++src',
-            theme: 'material',
-            lineNumbers: true,
+            mode: 'text/x-c++src',  // Set mode to C++
+            theme: 'material',       // Use the Material theme
+            lineNumbers: true,       // Show line numbers
           }}
           onBeforeChange={(editor, data, value) => {
-            setCode(value);
+            setCode(value);  // Update the code state with the new value
           }}
         />
       </div>
 
-      {/* Disable the button when loading */}
-      <button 
-        className={`submit-button ${loading ? 'loading' : ''}`} 
-        onClick={handleSubmit}
-        disabled={loading}  // Disable button during loading
-      >
-        {loading ? 'Submitting...' : 'Submit Code'}
-      </button>
+      <button className="submit-button" onClick={handleSubmit}>Submit Code</button>
 
+      {/* Link to view test cases */}
+      <div className="view-test-cases">
+        <Link to={`/problem/${id}/testcases`}>
+          <button className="view-testcases-button">View Test Cases</button>
+        </Link>
+      </div>
+
+      {/* Display submission results */}
       {response && response.results && (
         <div className="test-results">
           <h3>Test Results</h3>
@@ -195,6 +195,7 @@ const ProblemDetails = () => {
         </div>
       )}
 
+      {/* Show previous submissions */}
       <div className="previous-submissions">
         <h3>Previous Submissions</h3>
         <ul>

@@ -1,0 +1,28 @@
+.testcases-container {
+    margin: 20px;
+    padding: 20px;
+  }
+  
+  .testcases-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .testcases-table th, .testcases-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .testcases-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .testcases-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .testcases-table tr:hover {
+    background-color: #ddd;
+  }
+  

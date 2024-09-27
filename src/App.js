@@ -6,6 +6,7 @@ import PrivateRoute from './Privateroute';  // Import the PrivateRoute component
 import Login from './login';  // Import Login component
 import Signup from './signup'; 
 import Leaderboard from './components/Leaderboard'; 
+import TestCasesPage from './components/TestCasePage';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/problem/:id/testcases" element={<TestCasesPage />} />
 
         {/* Protected routes */}
         <Route 
