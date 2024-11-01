@@ -21,6 +21,7 @@ const ProblemDetails = () => {
   const [submissions, setSubmissions] = useState([]);
   const [username, setUsername] = useState('');
   const [latestScore, setLatestScore] = useState(null);
+  const [latestStatus, setLatestStatus] = useState(null);
   const [loading, setLoading] = useState(false);  // New state for loading
   const navigate = useNavigate();
 
@@ -37,7 +38,8 @@ const ProblemDetails = () => {
             latestSubmission = sub.val();  // Get the latest submission for this user
           });
           if (latestSubmission) {
-            setLatestScore(latestSubmission.score);  // Set the latest score
+            setLatestScore(latestSubmission.score);
+            setLatestStatus(latestSubmission.status);   // Set the latest score
           }
         });
 
@@ -154,9 +156,9 @@ const ProblemDetails = () => {
       <p className="problem-description">{problem.description} </p>
       <a href={problem.file} target="_blank" rel="noopener noreferrer"> [Open problem]</a>
 
-      {latestScore !== null && (
+      {latestScore !== null && latestStatus && (
         <div className="latest-score">
-          <p>Your latest score: {latestScore}% {latestScore === 100 ? '✅' : '❌'}</p>
+          <p>Your latest score: {latestScore}% {latestScore === 100 ? '✅' : '❌'} {latestStatus}</p>
         </div>
       )}
 
