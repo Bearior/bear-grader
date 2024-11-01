@@ -39,7 +39,8 @@ const ProblemDetails = () => {
           });
           if (latestSubmission) {
             setLatestScore(latestSubmission.score);
-            setLatestStatus(latestSubmission.status);
+            const statusString = `[${latestSubmission.results.join('')}]`;
+            setLatestStatus(statusString);
             setCode(latestSubmission.code);
           }
         });
