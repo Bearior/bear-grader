@@ -162,7 +162,7 @@ const ProblemDetails = () => {
 
       {response && response.results && (
         <div className="test-results">
-          <h3>Test Results</h3>
+          <h3>Test Results</h3> 
           <p>[{response.results.join('')}]</p>
           {/* <ul>
             {response.results.map((result, index) => (
