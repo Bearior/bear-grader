@@ -156,7 +156,24 @@ const ProblemDetails = () => {
 
       {latestScore !== null && (
         <div className="latest-score">
-          <p>Your latest score: {latestScore}% {latestScore === 100 ? '✅' : '❌'} [{response.results.join('')}]</p>
+          <p>Your latest score: {latestScore}% {latestScore === 100 ? '✅' : '❌'}</p>
+        </div>
+      )}
+
+      {response && response.results && (
+        <div className="test-results">
+          <h3>Test Results</h3>
+          <ul>
+            {response.results.map((result, index) => (
+              <li key={index}>
+                {result === "P" ? '✅ Pass' : 
+                result === "T" ? '⏱ Timeout' : 
+                result === "-" ? '❌ Incorrect' : 
+                '💥 Compilation Error'}
+              </li>
+            ))}
+          </ul>
+          <h3>Score: {response.score}%</h3>
         </div>
       )}
 
