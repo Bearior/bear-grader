@@ -156,7 +156,7 @@ const ProblemDetails = () => {
 
       {latestScore !== null && (
         <div className="latest-score">
-          <p>Your latest score: {latestScore}% {latestScore === 100 ? '✅' : '❌'}</p>
+          <p>Your latest score: {latestScore}% {latestScore === 100 ? '✅' : '❌'} [{response.results.join('')}]</p>
         </div>
       )}
 

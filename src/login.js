@@ -69,7 +69,7 @@ const Login = () => {
     <div className="auth-container">
       <div className="auth-box">
         <h2>Login</h2>
-        <p>- Bear's grader for midterm review -</p>
+        <p>- Bear's grader for review -</p>
         <input
           type="text"
           placeholder="Username or Email"
