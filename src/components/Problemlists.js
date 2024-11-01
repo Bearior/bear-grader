@@ -106,6 +106,7 @@ const ProblemList = () => {
       )}
 
       <h1>Available Problems</h1>
+      <h3>If you can do all problems below, you will pass final comprog for sure!</h3>
       <div className="problem-list">
         {problems.map((problem) => (
           <div key={problem.id} className="problem-card" onClick={() => handleCardClick(problem.id)}>
