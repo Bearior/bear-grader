@@ -40,6 +40,7 @@ const ProblemDetails = () => {
           if (latestSubmission) {
             setLatestScore(latestSubmission.score);
             setLatestStatus(latestSubmission.status);
+            setCode(latestSubmission.code);
           }
         });
 
