@@ -110,7 +110,7 @@ const ProblemList = () => {
         {problems.map((problem) => (
           <div key={problem.id} className="problem-card" onClick={() => handleCardClick(problem.id)}>
             <div className="problem-title">{problem.title}</div>
-            <p>Latest Score: {latestScores[problem.id] !== undefined ? latestScores[problem.id] : 0}% </p>
+            <p>Latest Score: {latestScores[problem.id] !== undefined ? latestScores[problem.id] : 0}% {latestStatus}</p>
             <progress 
               value={latestScores[problem.id] !== undefined ? latestScores[problem.id] : 0} 
               max="100"
