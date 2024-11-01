@@ -191,22 +191,7 @@ const ProblemDetails = () => {
           <button className="view-testcases-button">View Test Cases</button>
         </Link>
       </div>
-
-      {/* Display submission results */}
-      {response && response.results && (
-        <div className="test-results">
-          <h3>Test Results</h3>
-          <ul>
-            {response.results.map((result, index) => (
-              <li key={index}>
-                {result.success ? '✅' : '❌'} {result.message}
-              </li>
-            ))}
-          </ul>
-          <h3>Score: {response.score}%</h3>
-        </div>
-      )}
-
+      
       {/* Show previous submissions */}
       <div className="previous-submissions">
         <h3>Previous Submissions</h3>
