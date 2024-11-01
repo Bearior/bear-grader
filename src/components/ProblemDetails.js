@@ -164,24 +164,6 @@ const ProblemDetails = () => {
         </div>
       )}
 
-      {response && response.results && (
-        <div className="test-results">
-          <h3>Test Results</h3> 
-          <p>[{response.results.join('')}]</p>
-          {/* <ul>
-            {response.results.map((result, index) => (
-              <li key={index}>
-                {result === "P" ? '✅ Pass' : 
-                result === "T" ? '⏱ Timeout' : 
-                result === "-" ? '❌ Incorrect' : 
-                '💥 Compilation Error'}
-              </li>
-            ))}
-          </ul> */}
-          <h3>Score: {response.score}%</h3>
-        </div>
-      )}
-
       <p>This problem has {problem.testCases ? problem.testCases.length : 0} test cases.</p>
 
       {/* CodeMirror component for code input */}

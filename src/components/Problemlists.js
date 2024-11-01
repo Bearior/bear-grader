@@ -10,6 +10,7 @@ const ProblemList = () => {
   const [problems, setProblems] = useState([]);
   const [username, setUsername] = useState('');
   const [latestScores, setLatestScores] = useState({});  // Store latest score per problem
+  const [latestStatus, setLatestStatus] = useState(null);
   const navigate = useNavigate();
 
   // Fetch username and user-related data
@@ -53,6 +54,8 @@ const ProblemList = () => {
                 latestSubmission = sub.val();  // Get the latest submission
               });
               if (latestSubmission) {
+                const statusString = `[${latestSubmission.results.join('')}]`;
+                setLatestStatus(statusString);
                 setLatestScores(prevScores => ({
                   ...prevScores,
                   [problem.id]: latestSubmission.score  // Store score for each problem
@@ -107,7 +110,7 @@ const ProblemList = () => {
         {problems.map((problem) => (
           <div key={problem.id} className="problem-card" onClick={() => handleCardClick(problem.id)}>
             <div className="problem-title">{problem.title}</div>
-            <p>Latest Score: {latestScores[problem.id] !== undefined ? latestScores[problem.id] : 0}%</p>
+            <p>Latest Score: {latestScores[problem.id] !== undefined ? latestScores[problem.id] : 0}% {latestStatus}</p>
             <progress 
               value={latestScores[problem.id] !== undefined ? latestScores[problem.id] : 0} 
               max="100"
