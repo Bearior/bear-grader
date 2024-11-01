@@ -163,7 +163,8 @@ const ProblemDetails = () => {
       {response && response.results && (
         <div className="test-results">
           <h3>Test Results</h3>
-          <ul>
+          <p>[{response.results.join('')}]</p>
+          {/* <ul>
             {response.results.map((result, index) => (
               <li key={index}>
                 {result === "P" ? '✅ Pass' : 
@@ -172,7 +173,7 @@ const ProblemDetails = () => {
                 '💥 Compilation Error'}
               </li>
             ))}
-          </ul>
+          </ul> */}
           <h3>Score: {response.score}%</h3>
         </div>
       )}
