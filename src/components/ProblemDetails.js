@@ -39,7 +39,7 @@ const ProblemDetails = () => {
           });
           if (latestSubmission) {
             setLatestScore(latestSubmission.score);
-            setLatestStatus(latestSubmission.status);   // Set the latest score
+            setLatestStatus(latestSubmission.status);
           }
         });
 
@@ -156,7 +156,7 @@ const ProblemDetails = () => {
       <p className="problem-description">{problem.description} </p>
       <a href={problem.file} target="_blank" rel="noopener noreferrer"> [Open problem]</a>
 
-      {latestScore !== null && latestStatus && (
+      {latestScore !== null && (
         <div className="latest-score">
           <p>Your latest score: {latestScore}% {latestScore === 100 ? '✅' : '❌'} {latestStatus}</p>
         </div>
